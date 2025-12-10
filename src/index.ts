@@ -19,12 +19,12 @@ export default {
 
     const payload: PullRequestEvent | PullRequestReviewEvent = await request.json();
 
-    if (event === 'pull_request') {
-      return handlePullRequest(payload as PullRequestEvent, event);
-    }
-
     if (event === 'pull_request_review') {
 
+    }
+
+    if (event === 'pull_request') {
+      return handlePullRequest(payload as PullRequestEvent, event);
     }
 
     return new Response('OK');
@@ -41,11 +41,12 @@ async function handlePullRequest(event: PullRequestEvent, env: Env) {
       embed.color = 0x00afff;
       break;
     case "review_requested":
-      embed.description = `Review aangevraagd voor **${pull_request.requested_reviewers[0]?.name}**`;
+      embed.description = `Review(s) aangevraagd voor **${pull_request.requested_reviewers.map(u => u.name + " ")}**`;
       embed.color = 0x89cff0;
       break;
   }
 
+  return new Response('OK');
 }
 
 function basePREmbed({ pull_request, repository }: PullRequestEvent | PullRequestReviewEvent): APIEmbed {
